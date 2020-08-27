@@ -194,6 +194,8 @@ DIM SHARED iFontCharacter AS INTEGER
 DIM SHARED bFontChanged AS INTEGER
 DIM SHARED sClipboard AS STRING
 
+_CONSOLETITLE "VGA Font Editor"
+
 ' Check the command line
 sFontFile = COMMAND$
 
@@ -209,6 +211,7 @@ IF (sFontFile = "/?") THEN
     END
 END IF
 
+_TITLE "VGA Font Editor"
 _FULLSCREEN
 
 ' Default's to command line event on program entry
@@ -744,13 +747,13 @@ FUNCTION GetKey% ()
     ELSEIF i = 1 THEN
         GetKey% = ASC(k)
     ELSE
-        GetKey% = 0
+        GetKey% = KBNOKEY
     END IF
 END FUNCTION
 
 SUB WaitKeyPress
     DO
         SLEEP
-    LOOP UNTIL GetKey > KBNOKEY
+    LOOP UNTIL GetKey <> KBNOKEY
 END SUB
 
