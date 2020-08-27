@@ -1,6 +1,6 @@
 ' VGA font editor
-' Copyright (c) Samuel Gomes (Blade), 1999-2003
-' mailto: blade_go@hotmail.com
+' Copyright (c) Samuel Gomes, 2020
+' Updated to complie with QB64 on Windows
 
 OPTION _EXPLICIT
 OPTION BASE 0
@@ -8,6 +8,11 @@ OPTION BASE 0
 DECLARE DYNAMIC LIBRARY "user32"
     FUNCTION MessageBoxA& (BYVAL hwnd AS LONG, Message AS STRING, Title AS STRING, BYVAL MBType AS _UNSIGNED LONG)
 END DECLARE
+
+CONST FALSE% = 0
+CONST TRUE% = NOT FALSE
+
+CONST NULLSTRING = ""
 
 'Message Box Constant values as defined by Microsoft (MBType)
 CONST MB_OK& = 0 'OK button only
@@ -37,16 +42,149 @@ CONST IDNO& = 7 'No button pressed
 CONST IDTRYAGAIN& = 10 'Try again button pressed
 CONST IDCONTINUE& = 1 'Continue button pressed
 
+' Keyboard codes
+CONST KBNOKEY% = 0
+CONST KBESC% = 27
+CONST KBBACKSPACE% = 8
+CONST KBENTER% = 13
+CONST KBTAB% = 9
+CONST KBF1% = 315
+CONST KBF2% = 316
+CONST KBF3% = 317
+CONST KBF4% = 318
+CONST KBF5% = 319
+CONST KBF6% = 320
+CONST KBF7% = 321
+CONST KBF8% = 322
+CONST KBF9% = 323
+CONST KBF10% = 324
+CONST KBF11% = 389
+CONST KBF12% = 390
+CONST KBUP% = 328
+CONST KBDOWN% = 336
+CONST KBLEFT% = 331
+CONST KBRIGHT% = 333
+CONST KBINSERT% = 338
+CONST KBDELETE% = 339
+CONST KBHOME% = 327
+CONST KBEND% = 335
+CONST KBPAGEUP% = 329
+CONST KBPAGEDOWN% = 337
+CONST KBSHIFTTAB% = 271
+CONST KBCTRLA% = 1
+CONST KBCTRLB% = 2
+CONST KBCTRLC% = 3
+CONST KBCTRLD% = 4
+CONST KBCTRLE% = 5
+CONST KBCTRLF% = 6
+CONST KBCTRLG% = 7
+CONST KBCTRLH% = 8
+CONST KBCTRLI% = 9
+CONST KBCTRLJ% = 10
+CONST KBCTRLK% = 11
+CONST KBCTRLL% = 12
+CONST KBCTRLM% = 13
+CONST KBCTRLN% = 14
+CONST KBCTRLO% = 15
+CONST KBCTRLP% = 16
+CONST KBCTRLQ% = 17
+CONST KBCTRLR% = 18
+CONST KBCTRLS% = 19
+CONST KBCTRLT% = 20
+CONST KBCTRLU% = 21
+CONST KBCTRLV% = 22
+CONST KBCTRLW% = 23
+CONST KBCTRLX% = 24
+CONST KBCTRLY% = 25
+CONST KBCTRLZ% = 26
+CONST KBCTRLENTER% = 10
+CONST KBSPACEBAR% = 32
+CONST KBCTRLBACKSPACE% = 127
+CONST KBCTRLF1% = 350
+CONST KBCTRLF2% = 351
+CONST KBCTRLF3% = 352
+CONST KBCTRLF4% = 353
+CONST KBCTRLF5% = 354
+CONST KBCTRLF6% = 355
+CONST KBCTRLF7% = 356
+CONST KBCTRLF8% = 357
+CONST KBCTRLF9% = 358
+CONST KBCTRLF10% = 359
+CONST KBCTRLF11% = 393
+CONST KBCTRLF12% = 394
+CONST KBSHIFTF1% = 340
+CONST KBSHIFTF2% = 341
+CONST KBSHIFTF3% = 342
+CONST KBSHIFTF4% = 343
+CONST KBSHIFTF5% = 344
+CONST KBSHIFTF6% = 345
+CONST KBSHIFTF7% = 346
+CONST KBSHIFTF8% = 347
+CONST KBSHIFTF9% = 348
+CONST KBSHIFTF10% = 349
+CONST KBSHIFTF11% = 391
+CONST KBSHIFTF12% = 392
+CONST KBALTF1% = 360
+CONST KBALTF2% = 361
+CONST KBALTF3% = 362
+CONST KBALTF4% = 363
+CONST KBALTF5% = 364
+CONST KBALTF6% = 365
+CONST KBALTF7% = 366
+CONST KBALTF8% = 367
+CONST KBALTF9% = 368
+CONST KBALTF10% = 369
+CONST KBALTF11% = 395
+CONST KBALTF12% = 396
+CONST KBALTMINUS% = 386
+CONST KBALTPLUS% = 387
+CONST KBALT1% = 376
+CONST KBALT2% = 377
+CONST KBALT3% = 378
+CONST KBALT4% = 379
+CONST KBALT5% = 380
+CONST KBALT6% = 381
+CONST KBALT7% = 382
+CONST KBALT8% = 383
+CONST KBALT9% = 384
+CONST KBALT0% = 385
+CONST KBALTA% = 286
+CONST KBALTB% = 304
+CONST KBALTC% = 302
+CONST KBALTD% = 288
+CONST KBALTE% = 274
+CONST KBALTF% = 289
+CONST KBALTG% = 290
+CONST KBALTH% = 291
+CONST KBALTI% = 279
+CONST KBALTJ% = 292
+CONST KBALTK% = 293
+CONST KBALTL% = 294
+CONST KBALTM% = 306
+CONST KBALTN% = 305
+CONST KBALTO% = 280
+CONST KBALTP% = 281
+CONST KBALTQ% = 272
+CONST KBALTR% = 275
+CONST KBALTS% = 287
+CONST KBALTT% = 276
+CONST KBALTU% = 278
+CONST KBALTV% = 303
+CONST KBALTW% = 273
+CONST KBALTX% = 301
+CONST KBALTY% = 277
+CONST KBALTZ% = 300
+
 ' Font file ID
 CONST FONT_ID = "FONT"
 
 ' Program events
-CONST EVENT_QUIT = 0
-CONST EVENT_SAVE = 1
-CONST EVENT_LOAD = 2
-CONST EVENT_CHOOSE = 3
-CONST EVENT_EDIT = 4
-CONST EVENT_COMMAND = 5
+CONST EVENT_QUIT% = 0
+CONST EVENT_SAVE% = 1
+CONST EVENT_LOAD% = 2
+CONST EVENT_CHOOSE% = 3
+CONST EVENT_EDIT% = 4
+CONST EVENT_COMMAND% = 5
 
 DIM iEvent AS INTEGER
 DIM SHARED sFontFile AS STRING
@@ -62,14 +200,16 @@ sFontFile = COMMAND$
 ' Check if any command line help is needed
 IF (sFontFile = "/?") THEN
     PRINT
-    PRINT "EDITFONT: VGA Font Editor. A DOS gFrame tool. Version 2.1"
-    PRINT "Syntax: EDITFONT [fontfile[.fnt]]"
+    PRINT "EDITFONT: VGA Font Editor. Version 3.0"
+    PRINT "Syntax: EDITFONT [fontfile.fnt]"
     PRINT
-    PRINT "Copyright (c) Samuel Gomes (Blade), 1999-2003"
-    PRINT "mailto: blade_go@hotmail.com || blade_g2000@yahoo.com"
+    PRINT "Copyright (c) Samuel Gomes, 2020"
+    PRINT "https://github.com/a740g/"
     PRINT
     END
 END IF
+
+_FULLSCREEN
 
 ' Default's to command line event on program entry
 iEvent = EVENT_COMMAND
@@ -78,28 +218,28 @@ iEvent = EVENT_COMMAND
 DO
     SELECT CASE (iEvent)
         CASE EVENT_COMMAND
-            iEvent = DoCommandLine%
+            iEvent = DoCommandLine
 
         CASE EVENT_LOAD
-            iEvent = LoadVGAFont%
+            iEvent = LoadVGAFont
 
         CASE EVENT_SAVE
-            iEvent = SaveVGAFont%
+            iEvent = SaveVGAFont
 
         CASE EVENT_CHOOSE
-            iEvent = ChooseCharacter%
+            iEvent = ChooseCharacter
 
         CASE EVENT_EDIT
-            iEvent = EditCharacter%
+            iEvent = EditCharacter
 
         CASE EVENT_QUIT
             IF (bFontChanged) THEN
-                SELECT CASE (MsgBox("The font has changed. Save it now?", "Save Font", MB_YESNOCANCEL& + MB_APPLMODAL&))
-                    CASE IDYES&
-                        iEvent = SaveVGAFont%
+                SELECT CASE (MsgBox("The font has changed. Save it now?", "Save Font", MB_YESNOCANCEL + MB_APPLMODAL + IDYES))
+                    CASE IDYES
+                        iEvent = SaveVGAFont
                         EXIT DO
 
-                    CASE IDNO&
+                    CASE IDNO
                         EXIT DO
 
                     CASE ELSE
@@ -143,8 +283,6 @@ FUNCTION ChooseCharacter% ()
 
     ' Swith to graphics mode
     SCREEN 7
-
-    'SetBorderColor 7
 
     ' Show some info
     COLOR 4
@@ -191,53 +329,53 @@ FUNCTION ChooseCharacter% ()
     SCREEN , , 0, 0
 
     DO
-        in = GetKey%
+        in = GetKey
 
         SELECT CASE (in)
-            CASE kbF1
+            CASE KBF1
                 SCREEN , , 1, 1
                 WaitKeyPress
-                ClearKeyboardBuffer
+                'ClearKeyboardBuffer
                 SCREEN , , 0, 0
 
-            CASE kbLeft
+            CASE KBLEFT
                 DrawCharSelector xp, yp, 0
                 xp = xp - 1
                 IF (xp < 1) THEN xp = 32
                 DrawCharSelector xp, yp, 15
 
-            CASE kbRight
+            CASE KBRIGHT
                 DrawCharSelector xp, yp, 0
                 xp = xp + 1
                 IF (xp > 32) THEN xp = 1
                 DrawCharSelector xp, yp, 15
 
-            CASE kbUp
+            CASE KBUP
                 DrawCharSelector xp, yp, 0
                 yp = yp - 1
                 IF (yp < 1) THEN yp = 8
                 DrawCharSelector xp, yp, 15
 
-            CASE kbDown
+            CASE KBDOWN
                 DrawCharSelector xp, yp, 0
                 yp = yp + 1
                 IF (yp > 8) THEN yp = 1
                 DrawCharSelector xp, yp, 15
 
-            CASE kbEnter
+            CASE KBENTER
                 iFontCharacter = (xp - 1) + (32 * (yp - 1))
                 ChooseCharacter = EVENT_EDIT
                 EXIT DO
 
-            CASE kbF2
+            CASE KBF2
                 ChooseCharacter = EVENT_SAVE
                 EXIT DO
 
-            CASE kbF3
+            CASE KBF3
                 ChooseCharacter = EVENT_LOAD
                 EXIT DO
 
-            CASE kbEsc
+            CASE KBESC
                 ChooseCharacter = EVENT_QUIT
                 EXIT DO
 
@@ -254,26 +392,24 @@ FUNCTION ChooseCharacter% ()
                     END IF
                 END IF
 
-                sleep
+                SLEEP 1
         END SELECT
     LOOP
 
-    DoneGraph
+    SCREEN 0
 END FUNCTION
 
-FUNCTION DoCommandLine%()
-    IF (sFontFile = sEmpty) THEN
+FUNCTION DoCommandLine% ()
+    IF (sFontFile = NULLSTRING) THEN
         DoCommandLine% = EVENT_LOAD
     ELSE
-        ' Adjust file name
-        sFontFile = FExpand(ReplaceExtension(sFontFile, "fnt", False))
-        IF NOT (FileExists(sFontFile)) THEN
+        IF NOT (_FILEEXISTS(sFontFile)) THEN
             iFontHeight = 16
             DO
-                iFontHeight = VAL(INPUTBOX$("Enter new font height in pixels (8 - 16):", "Font Height", STR$(iFontHeight)))
+                INPUT ; "Enter new font height in pixels (8 - 16): ", iFontHeight
             LOOP WHILE (iFontHeight < 8 OR iFontHeight > 16)
             ChangeFontHeight (iFontHeight)
-            LoadVGAROMFont iFontHeight      ' Load a default font from ROM
+            ReadFont "default.fnt"
         ELSE
             ' Read in the font
             ReadFont (sFontFile)
@@ -282,22 +418,22 @@ FUNCTION DoCommandLine%()
     END IF
 END FUNCTION
 
-SUB DrawBmpSelector(xe AS INTEGER, ye AS INTEGER, c AS INTEGER)
+SUB DrawBmpSelector (xe AS INTEGER, ye AS INTEGER, c AS INTEGER)
     LINE (7 + (xe - 1) * 10, 7 + (ye - 1) * 10)-(17 + (xe - 1) * 10, 17 + (ye - 1) * 10), c, B
 END SUB
 
-SUB DrawCharacter(ch AS INTEGER, sx AS INTEGER, sy AS INTEGER)
+SUB DrawCharacter (ch AS INTEGER, sx AS INTEGER, sy AS INTEGER)
     DIM uy AS INTEGER, x AS INTEGER
 
     FOR uy = 1 TO iFontHeight
-        x = ASC(StrChr(cFont(ch), uy))
+        x = ASC(cFont(ch), uy)
         x = 256 * (x + (256 * (x > 127)))
         LINE (sx + 1, sy + uy)-(sx + 8, sy + uy), 1
         LINE (sx + 1, sy + uy)-(sx + 8, sy + uy), 14, , x
     NEXT
 END SUB
 
-SUB DrawCharBitmap(ch AS INTEGER)
+SUB DrawCharBitmap (ch AS INTEGER)
     DIM x AS INTEGER, y AS INTEGER
     DIM xs AS INTEGER, ys AS INTEGER
 
@@ -314,11 +450,11 @@ SUB DrawCharBitmap(ch AS INTEGER)
     NEXT
 END SUB
 
-SUB DrawCharSelector(xp AS INTEGER, yp AS INTEGER, c AS INTEGER)
+SUB DrawCharSelector (xp AS INTEGER, yp AS INTEGER, c AS INTEGER)
     LINE ((xp - 1) * 10, (yp * 20))-(9 + (xp - 1) * 10, iFontHeight + 1 + (yp * 20)), c, B
 END SUB
 
-FUNCTION EditCharacter%()
+FUNCTION EditCharacter% ()
     DIM xe AS INTEGER, ye AS INTEGER
     DIM xs AS INTEGER, ys AS INTEGER
     DIM in AS INTEGER, xv AS INTEGER
@@ -331,9 +467,7 @@ FUNCTION EditCharacter%()
     refTime = TIMER
 
     ' Switch to graphics mode
-    InitGraph (EGALO)
-
-    SetBorderColor 7
+    SCREEN 7
 
     ' Display some help
     COLOR 4
@@ -364,36 +498,36 @@ FUNCTION EditCharacter%()
     DrawBmpSelector xe, ye, 15
 
     DO
-        in = GetKey()
+        in = GetKey
 
         SELECT CASE (in)
-            CASE kbLeft
+            CASE KBLEFT
                 DrawBmpSelector xe, ye, 0
                 xe = xe - 1
                 IF (xe < 1) THEN xe = 8
                 DrawBmpSelector xe, ye, 15
 
-            CASE kbRight
+            CASE KBRIGHT
                 DrawBmpSelector xe, ye, 0
                 xe = xe + 1
                 IF (xe > 8) THEN xe = 1
                 DrawBmpSelector xe, ye, 15
 
-            CASE kbUp
+            CASE KBUP
                 DrawBmpSelector xe, ye, 0
                 ye = ye - 1
                 IF (ye < 1) THEN ye = iFontHeight
                 DrawBmpSelector xe, ye, 15
 
-            CASE kbDown
+            CASE KBDOWN
                 DrawBmpSelector xe, ye, 0
                 ye = ye + 1
                 IF (ye > iFontHeight) THEN ye = 1
                 DrawBmpSelector xe, ye, 15
 
-            CASE kbSpaceBar
+            CASE KBSPACEBAR
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 xv = 2 ^ (8 - xe)
                 IF (GetFontXY(iFontCharacter, xe, ye)) THEN
@@ -409,9 +543,9 @@ FUNCTION EditCharacter%()
                     LINE (xs, ys)-(xs + 8, ys + 8), 1, BF
                 END IF
 
-            CASE kbCtrlV
+            CASE KBCTRLV
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 v = cFont(iFontCharacter)
                 FOR n = 1 TO iFontHeight
@@ -419,9 +553,9 @@ FUNCTION EditCharacter%()
                 NEXT
                 DrawCharBitmap (iFontCharacter)
 
-            CASE kbCtrlH
+            CASE KBCTRLH
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 v = STRING$(iFontHeight, 0)
                 FOR y = 1 TO iFontHeight
@@ -435,9 +569,9 @@ FUNCTION EditCharacter%()
                 cFont(iFontCharacter) = v
                 DrawCharBitmap (iFontCharacter)
 
-            CASE kbCtrlI
+            CASE KBCTRLI
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 v = cFont(iFontCharacter)
                 FOR n = 1 TO iFontHeight
@@ -445,29 +579,29 @@ FUNCTION EditCharacter%()
                 NEXT
                 DrawCharBitmap (iFontCharacter)
 
-            CASE kbCtrlC
+            CASE KBCTRLC
                 sClipboard = cFont(iFontCharacter)
 
-            CASE kbCtrlP
+            CASE KBCTRLP
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 cFont(iFontCharacter) = sClipboard
                 DrawCharBitmap (iFontCharacter)
 
-            CASE kbDelete
+            CASE KBDELETE
                 ' Flag font changed
-                bFontChanged = True
+                bFontChanged = TRUE
 
                 cFont(iFontCharacter) = STRING$(iFontHeight, 0)
                 DrawCharBitmap (iFontCharacter)
 
-            CASE kbEsc
+            CASE KBESC
                 cFont(iFontCharacter) = cpy
                 EditCharacter = EVENT_CHOOSE
                 EXIT DO
 
-            CASE kbEnter
+            CASE KBENTER
                 EditCharacter = EVENT_CHOOSE
                 EXIT DO
 
@@ -484,50 +618,27 @@ FUNCTION EditCharacter%()
                     END IF
                 END IF
 
-                Yield
+                SLEEP 1
         END SELECT
     LOOP
 
-    DoneGraph
+    SCREEN 0
 END FUNCTION
 
-FUNCTION GetFileName$(sFile AS STRING)
-    DIM drv AS STRING, pth AS STRING
-    DIM nam AS STRING, ext AS STRING
-
-    FSplit sFile, drv, pth, nam, ext
-
-    GetFileName = nam + ext
-END FUNCTION
-
-FUNCTION GetFilePath$(sFile AS STRING)
-    DIM drv AS STRING, pth AS STRING
-    DIM nam AS STRING, ext AS STRING
-
-    FSplit sFile, drv, pth, nam, ext
-
-    GetFilePath = drv + pth
-END FUNCTION
-
-FUNCTION GetFontXY%(c AS INTEGER, x AS INTEGER, y AS INTEGER)
+FUNCTION GetFontXY% (c AS INTEGER, x AS INTEGER, y AS INTEGER)
     DIM xv AS INTEGER, B AS INTEGER
 
     xv = 2 ^ (8 - x)
-    B = ASC(StrChr(cFont(c), y))
+    B = ASC(cFont(c), y)
     GetFontXY = SGN(B AND xv)
 END FUNCTION
 
-FUNCTION LoadVGAFont%()
-    DIM sFile AS STRING, sPath AS STRING, bCancel AS INTEGER
-
-    sFile = GetFileName(sFontFile)
-    sPath = GetFilePath(sFontFile)
-
-    ' Get and existing font file name from the user
-    FileOpen sFile, sPath, "*.fnt", "Open Font", BLACK, WHITE, 0, bCancel
+FUNCTION LoadVGAFont% ()
+    ' Get an existing font file name from the user
+    INPUT ; "Open Font: ", sFontFile
 
     ' Exit if user canceled
-    IF (bCancel) THEN
+    IF (sFontFile = NULLSTRING OR NOT _FILEEXISTS(sFontFile)) THEN
         ' Exit if 1st time
         IF (iFontHeight = 0) THEN
             LoadVGAFont = EVENT_QUIT
@@ -537,49 +648,15 @@ FUNCTION LoadVGAFont%()
         EXIT FUNCTION
     END IF
 
-    sFontFile = sPath + "\" + sFile
-
     ' Read in the font
     ReadFont (sFontFile)
 
-    bFontChanged = False
+    bFontChanged = FALSE
 
     LoadVGAFont = EVENT_CHOOSE
 END FUNCTION
 
-SUB LoadVGAROMFont(iFontCode AS INTEGER)
-    DIM Regs AS RegTypeX
-    DIM i AS INTEGER, j AS INTEGER
-
-    Regs.AX = &H1130
-
-    SELECT CASE iFontCode
-        CASE IS = 8
-            Regs.BX = &H300
-            InterruptX &H10, Regs, Regs
-        CASE IS = 16
-            Regs.BX = &H600
-            InterruptX &H10, Regs, Regs
-    END SELECT
-
-    IF (iFontCode = 8 OR iFontCode = 16) THEN
-        DEF SEG = Regs.ES
-
-        FOR i = 0 TO 255
-            cFont(i) = ""
-            FOR j = 1 TO iFontCode  ' height
-                cFont(i) = cFont(i) + CHR$(PEEK(Regs.BP))
-                Regs.BP = Regs.BP + 1   ' increment pointer
-            NEXT
-        NEXT
-
-        DEF SEG
-
-        iFontHeight = iFontCode
-    END IF
-END SUB
-
-SUB ReadFont(sFile AS STRING)
+SUB ReadFont (sFile AS STRING)
     DIM hFile AS INTEGER, i AS INTEGER
     DIM sId AS STRING * 4, sFntHgt AS STRING * 1
 
@@ -608,29 +685,23 @@ SUB ReadFont(sFile AS STRING)
     CLOSE hFile
 END SUB
 
-FUNCTION SaveVGAFont%()
-    DIM sFile AS STRING, sPath AS STRING, bCancel AS INTEGER
+FUNCTION SaveVGAFont% ()
 
-    sFile = GetFileName(sFontFile)
-    sPath = GetFilePath(sFontFile)
-
-    ' Get and existing font file name from the user
-    FileSave sFile, sPath, "*.fnt", "Save Font", BLACK, WHITE, 0, bCancel
+    ' Get an existing font file name from the user
+    INPUT ; "Save Font: ", sFontFile
 
     SaveVGAFont = EVENT_CHOOSE
 
     ' Exit if user canceled
-    IF (bCancel) THEN EXIT FUNCTION
-
-    sFontFile = sPath + "\" + sFile
+    IF (sFontFile = NULLSTRING) THEN EXIT FUNCTION
 
     ' Read in the font
     WriteFont (sFontFile)
 
-    bFontChanged = False
+    bFontChanged = FALSE
 END FUNCTION
 
-SUB WriteFont(sFile AS STRING)
+SUB WriteFont (sFile AS STRING)
     DIM hFile AS INTEGER, i AS INTEGER
     DIM sId AS STRING * 4, sFntHgt AS STRING * 1
 
@@ -652,26 +723,34 @@ SUB WriteFont(sFile AS STRING)
     CLOSE hFile
 END SUB
 
-FUNCTION MsgBox&(Message as string, Title as string, BoxType as long)
+FUNCTION MsgBox& (Message AS STRING, Title AS STRING, BoxType AS LONG)
     MsgBox& = MessageBoxA&(_WINDOWHANDLE, Message, Title, BoxType)
 END FUNCTION
 
-sub Abort(sMessage as string)
-    MsgBox smessage, "Abort", mb_ok& + mb_iconstop&
-end sub
+SUB Abort (sMessage AS STRING)
+    DIM i AS LONG
 
-function GetKey%()
-    dim k as string, i as integer
+    i = MsgBox(sMessage, "Abort", MB_OK + MB_ICONSTOP)
+END SUB
 
-    k = inkey$
-    i = len(k)
+FUNCTION GetKey% ()
+    DIM k AS STRING, i AS INTEGER
 
-    if i = 2 then
-        getkey% = 256 + asc(right(k, 1))
-    else if (i = 1)
-        getkey% = asc(k)
-    else
-        getkey% =0
-    end if
-end function
+    k = INKEY$
+    i = LEN(k)
+
+    IF i = 2 THEN
+        GetKey% = 256 + ASC(RIGHT$(k, 1))
+    ELSEIF i = 1 THEN
+        GetKey% = ASC(k)
+    ELSE
+        GetKey% = 0
+    END IF
+END FUNCTION
+
+SUB WaitKeyPress
+    DO
+        SLEEP
+    LOOP UNTIL GetKey > KBNOKEY
+END SUB
 
